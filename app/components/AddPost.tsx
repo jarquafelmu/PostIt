@@ -9,7 +9,8 @@ import toast from "react-hot-toast";
 export default function AddPost() {
   const [title, setTitle] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
-  let toastPostID: string;
+  const queryClient = useQueryClient();
+  let toastPostID: string = "post-toast";
 
   // Create a new post
   const { mutate } = useMutation(
@@ -24,6 +25,7 @@ export default function AddPost() {
       onSuccess: () => {
         toast.success("Post created. 🔥", { id: toastPostID });
         setTitle("");
+        queryClient.invalidateQueries(["posts"]);
       },
       onSettled: () => {
         setIsDisabled(false);
@@ -33,8 +35,9 @@ export default function AddPost() {
 
   const submitPost = async (e: FormEvent) => {
     e.preventDefault();
-    // ? toastPostID is supposed to link toasts together but it doesn't work
-    toastPostID = toast.loading("Creating post...", { duration: 1000 });
+    toast.loading("Creating post...", {
+      id: toastPostID,
+    });
     setIsDisabled(true);
     mutate(title);
   };
