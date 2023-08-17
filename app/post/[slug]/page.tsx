@@ -40,7 +40,7 @@ export default function PostDetail(url: URL) {
       />
       <AddComment id={data.id} />
       {data?.comments?.map((comment: CommentType) => (
-        <div key={comment.id} className="my-8">
+        <div key={comment.id} className="my-6 bg-white rounded-md p-8">
           <div className="flex items-center gap-2">
             <img
               className="rounded-full"
@@ -50,8 +50,9 @@ export default function PostDetail(url: URL) {
               alt="avatar"
             />
             <h3 className="font-bold text-gray-700">{comment.user!.name}</h3>
+            <h2 className="text-sm">{comment.createdAt.toString()}</h2>
           </div>
-          <div className="my-8">
+          <div className="py-4">
             <p className="break-all">{comment.message}</p>
           </div>
         </div>
