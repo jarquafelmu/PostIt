@@ -6,22 +6,21 @@ export default async function handler(
   res: NextApiResponse
 ) {
   if (req.method !== "GET") return;
-  // Fetch all posts
+
+  // Get auth user's post
   try {
-    const data = await prisma.post.findMany({
+    const data = await prisma.post.findUnique({
+      where: { id: req.query.details as string },
       include: {
+        comments: { orderBy: { createdAt: "desc" }, include: { user: true } },
         user: true,
-        comments: true,
-      },
-      orderBy: {
-        createdAt: "desc",
       },
     });
+
     return res.status(200).json(data);
   } catch (err) {
-    console.error(err);
     return res
       .status(500)
-      .json({ error: "Internal server error when fetching posts." });
+      .json({ error: "Internal server error when getting posts." });
   }
 }

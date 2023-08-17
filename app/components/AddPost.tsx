@@ -3,30 +3,27 @@
 import { FormEvent, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { MAX_TITLE_LENGTH } from "../../utils/constants";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import toast from "react-hot-toast";
+import { handleToastError } from "@/utils/toastErrors";
 
 export default function AddPost() {
   const [title, setTitle] = useState("");
   const [isDisabled, setIsDisabled] = useState(false);
   const queryClient = useQueryClient();
-  let toastPostID: string = "post-toast";
+  const toastId: string = "post-toast";
 
   // Create a new post
   const { mutate } = useMutation(
     async (title: string) => await axios.post("/api/posts/addPost", { title }),
     {
-      onError: (err) => {
-        if (err instanceof AxiosError)
-          toast.error(err?.response?.data?.error || "An error occurred.", {
-            id: toastPostID,
-          });
-      },
+      onError: (err) => handleToastError(err, toastId),
       onSuccess: () => {
-        toast.success("Post created. 🔥", { id: toastPostID });
+        toast.success("Post created. 🔥", { id: toastId });
         setTitle("");
         queryClient.invalidateQueries(["posts"]);
       },
+      // finally do this
       onSettled: () => {
         setIsDisabled(false);
       },
@@ -36,7 +33,7 @@ export default function AddPost() {
   const submitPost = async (e: FormEvent) => {
     e.preventDefault();
     toast.loading("Creating post...", {
-      id: toastPostID,
+      id: toastId,
     });
     setIsDisabled(true);
     mutate(title);

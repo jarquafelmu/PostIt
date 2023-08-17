@@ -8,7 +8,7 @@ interface Props {
   name: string;
   postTitle: string;
   id: string;
-  comments?: Comment[];
+  numComments?: number;
 }
 
 export default function Posts({
@@ -16,7 +16,7 @@ export default function Posts({
   name,
   postTitle,
   id,
-  comments,
+  numComments,
 }: Props) {
   return (
     <div className="bg-white my-8 p-8 rounded-lg">
@@ -34,9 +34,9 @@ export default function Posts({
         <p className="break-all">{postTitle}</p>
       </div>
       <div className="flex gap-4 cursor-pointer items-center">
-        <Link href={`/posts/${id}`}>
+        <Link href={`/post/${id}`}>
           <p className="text-sm font-bold text-gray-700">
-            {comments?.length || 0} Comments
+            {numComments || 0} Comments
           </p>
         </Link>
       </div>
